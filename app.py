@@ -3,7 +3,7 @@ import numpy as np
 import pickle
 
 # Load the trained model
-with open('bangalore_home_price_model.pkl', 'rb') as f:
+with open('banglore_home_prices_model.pickle', 'rb') as f:
     model = pickle.load(f)
 
 # App title and description
@@ -22,3 +22,4 @@ if st.button("Predict Price"):
     X = np.array([[area, bhk, bath]])
     prediction = model.predict(X)[0]
     st.success(f"🏡 Estimated Price: ₹ {prediction:,.2f} Lakhs")
+
