@@ -21,7 +21,7 @@ area = st.number_input("Total Area (sqft)", min_value=200, max_value=10000, step
 bhk = st.number_input("Number of Bedrooms (BHK)", min_value=1, max_value=10, step=1)
 bath = st.number_input("Number of Bathrooms", min_value=1, max_value=10, step=1)
 location = st.selectbox("Location", locations)
-
+location = location.lower()
 # Prediction button
 if st.button("Predict Price"):
     # Create input vector
@@ -35,3 +35,4 @@ if st.button("Predict Price"):
 
     prediction = round(model.predict([x])[0], 2)
     st.success(f"🏡 Estimated Price: ₹ {prediction:,.2f} Lakhs")
+
