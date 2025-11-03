@@ -23,3 +23,4 @@ if st.button("Predict Price"):
     prediction = model.predict(X)[0]
     st.success(f"🏡 Estimated Price: ₹ {prediction:,.2f} Lakhs")
 
+
