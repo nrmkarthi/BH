@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 
 # Load model and column data
-with open("bengaluru_house_price_model.pkl", "rb") as f:
+with open("banglore_home_prices_model.pickle", "rb") as f:
     model = pickle.load(f)
 
 with open("columns.pkl", "rb") as f:
@@ -50,3 +50,4 @@ if st.button("Estimate Price"):
 
     except Exception as e:
         st.error(f"Error: {str(e)}")
+
