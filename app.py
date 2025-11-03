@@ -34,4 +34,6 @@ if st.button("Predict Price"):
         x[loc_index] = 1
 
     prediction = round(model.predict([x])[0], 2)
-    st.success(f"🏡 Estimated Price: ₹ {prediction:,.2f} Lakhs")
+    st.success(f"🏡 Estimated Price: ₹ {abs(prediction):,.2f} Lakhs")
+
+
