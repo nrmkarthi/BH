@@ -1,53 +1,37 @@
 import streamlit as st
-import pickle
 import numpy as np
+import pickle
+import json
 
-# Load model and column data
-with open("banglore_home_prices_model.pickle", "rb") as f:
+# Load model and columns
+with open('banglore_home_prices_model.pickle', 'rb') as f:
     model = pickle.load(f)
 
-with open("columns.pkl", "rb") as f:
-    data_columns = pickle.load(f)
+with open('columns.json', 'r') as f:
+    data_columns = json.load(f)['data_columns']
 
-st.title("🏠 Bengaluru House Price Predictor")
+# Extract locations from columns
+locations = data_columns[3:]  # ['1st Block Jayanagar', 'AECS Layout', 'Whitefield', ...]
 
-# User input
-location = st.text_input("Enter Location (e.g., Whitefield, Kothanur, Marathahalli):")
-sqft = st.number_input("Enter Total Square Feet:", min_value=300.0, max_value=10000.0, value=1000.0)
-bath = st.number_input("Enter Number of Bathrooms:", min_value=1, max_value=10, value=2)
-bhk = st.number_input("Enter Number of Bedrooms (BHK):", min_value=1, max_value=10, value=2)
+st.title("🏠 Bangalore Home Price Prediction App")
+st.write("Enter property details to estimate the price (in Lakhs).")
 
-# Predict button
-if st.button("Estimate Price"):
-    try:
-        # Prepare input array
-        x = np.zeros(len(data_columns))
-        x[0] = sqft
-        x[1] = bath
-        x[2] = bhk
+# Input fields
+area = st.number_input("Total Area (sqft)", min_value=200, max_value=10000, step=50)
+bhk = st.number_input("Number of Bedrooms (BHK)", min_value=1, max_value=10, step=1)
+bath = st.number_input("Number of Bathrooms", min_value=1, max_value=10, step=1)
+location = st.selectbox("Location", locations)
 
-        # Match location (case-insensitive, but keep data_columns format)
-        matched_loc = None
-        for col in data_columns:
-            if col.strip().lower() == location.strip().lower():
-                matched_loc = col
-                break
+# Prediction button
+if st.button("Predict Price"):
+    # Create input vector
+    x = np.zeros(len(data_columns))
+    x[0] = area
+    x[1] = bath
+    x[2] = bhk
+    if location in data_columns:
+        loc_index = data_columns.index(location)
+        x[loc_index] = 1
 
-        if matched_loc:
-            loc_index = data_columns.index(matched_loc)
-            x[loc_index] = 1
-        else:
-            st.warning(f"⚠️ Location '{location}' not found in training data. Using average location effect.")
-
-        # Predict and clean result
-        predicted_price = round(model.predict([x])[0], 2)
-
-        # Avoid negative predictions
-        if predicted_price < 0:
-            predicted_price = 0.0
-
-        st.success(f"🏡 **Estimated Price: ₹ {predicted_price:.2f} Lakhs**")
-
-    except Exception as e:
-        st.error(f"Error: {str(e)}")
-
+    prediction = round(model.predict([x])[0], 2)
+    st.success(f"🏡 Estimated Price: ₹ {prediction:,.2f} Lakhs")
